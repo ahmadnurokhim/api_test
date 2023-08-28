@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <!-- Link to Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('update_prices', function(data) {
+            var cards = document.getElementsByClassName('card-text');
+            for (var i = 0; i < data.length; i++) {
+                cards[i].textContent = 'Price: $' + data[i].price.toFixed(2);
+            }
+        });
+    </script>
+</head>
+<body>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Sales Dashboard</h1>
+        <div class="row">
+            {% for sale in sales_data %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ sale.product_name }}</h5>
+                        <p class="card-text">Price: ${{ sale.price }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Link to Bootstrap JS and jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>
