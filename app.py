@@ -116,6 +116,10 @@ data_points = [
 def index():
     return render_template('dashboard.html')
 
+@app.route('/hi')
+def hi():
+    return "HALOOOOOOOOOOOOOOOOOOOO"
+
 @socketio.on('initial_data_request')
 def send_initial_data():
     emit('initial_data', data_points, namespace='/')
@@ -123,8 +127,8 @@ def send_initial_data():
 def update_data():
     while True:
         timestamp = time.strftime('%H:%M:%S')
-        temperature = data_points[-1]['temperature'] * np.random.normal(1, 0.01)
-        humidity = data_points[-1]['humidity'] * np.random.normal(1, 0.01)
+        temperature = data_points[-1]['temperature'] * np.random.normal(1, 0.1)
+        humidity = data_points[-1]['humidity'] * np.random.normal(1, 0.1)
 
         data_point = {'timestamp': timestamp, 'temperature': temperature, 'humidity': humidity}
         data_points.append(data_point)
