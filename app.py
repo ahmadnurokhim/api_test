@@ -3,17 +3,17 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 data = [
-    {'time': '25/28/2023', 'value': 27},
-    {'time': '26/28/2023', 'value': 25},
-    {'time': '27/28/2023', 'value': 31},
-    {'time': '28/28/2023', 'value': 26},
-    {'time': '29/28/2023', 'value': 27}
+    {'time': '25/08/2023', 'value': 27},
+    {'time': '26/08/2023', 'value': 25},
+    {'time': '27/08/2023', 'value': 31},
+    {'time': '28/08/2023', 'value': 26},
+    {'time': '29/08/2023', 'value': 27}
 ]
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    time_param = request.args.get('time')
-
+    time_param = request.form.get('time')
+    print(time_param)
     if time_param:
         result = [entry for entry in data if entry['time'] == time_param]
         if result:
@@ -29,6 +29,7 @@ def add_data():
     
     if 'time' in new_entry and 'value' in new_entry:
         data.append(new_entry)
+        print(data)
         return "Data added successfully.", 201
     else:
         return "Invalid data format. Both 'time' and 'value' are required.", 400
