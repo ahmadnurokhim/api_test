@@ -1,35 +1,37 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
-import numpy as np
-import threading
-import time
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
-sales_data = [
-    {'product_name': 'Product A', 'price': 50},
-    {'product_name': 'Product B', 'price': 80},
-    {'product_name': 'Product C', 'price': 60},
-    # Add more data here
+data = [
+    {'time': '25/28/2023', 'value': 27},
+    {'time': '26/28/2023', 'value': 25},
+    {'time': '27/28/2023', 'value': 31},
+    {'time': '28/28/2023', 'value': 26},
+    {'time': '29/28/2023', 'value': 27}
 ]
 
-def update_prices():
-    while True:
-        for sale in sales_data:
-            sale['price'] *= np.random.normal(1, 0.05)
-        socketio.emit('update_prices', sales_data, namespace='/')
-        time.sleep(1)
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    time_param = request.args.get('time')
 
-@app.route('/')
-def index():
-    return render_template('index.html', sales_data=sales_data)
+    if time_param:
+        result = [entry for entry in data if entry['time'] == time_param]
+        if result:
+            return jsonify(result)
+        else:
+            return "No data found for the given time.", 404
+    else:
+        return jsonify(data)
 
-@socketio.on('connect', namespace='/')
-def test_connect():
-    emit('update_prices', sales_data)
+@app.route('/add_data', methods=['POST'])
+def add_data():
+    new_entry = request.get_json()
+    
+    if 'time' in new_entry and 'value' in new_entry:
+        data.append(new_entry)
+        return "Data added successfully.", 201
+    else:
+        return "Invalid data format. Both 'time' and 'value' are required.", 400
 
 if __name__ == '__main__':
-    t = threading.Thread(target=update_prices)
-    t.start()
-    socketio.run(app, debug=True)
+    app.run(debug=True)
